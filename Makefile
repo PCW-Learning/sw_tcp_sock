@@ -1,16 +1,14 @@
 # 파일 경로 설정
 SRC_DIR = src
 INCLUDE_DIR = include
-# TCP_SERVER_SRCS = ./tcpServer.c
-# TCP_SERVER_OBJS = ./tcpServer.o
-# TCP_CLIENT_SRCS = ./tcpClient.c
-# TCP_CLIENT_OBJS = ./tcpClient.o
 SOCKET_SRCS = $(wildcard $(SRC_DIR)/*.c)
 SOCKET_OBJS = $(patsubst %.c, %.o, $(SOCKET_SRCS))
-CFLAGS = -Wall -g -I$(INCLUDE_DIR)
-# TCP_SERVER = tcpServer
-# TCP_CLIENT = tcpClient
+CFLAGS = -Wall -g -fPIC -I$(INCLUDE_DIR)
 
+# 데스크탑용 설정
+DESKTOP_TARGET_LIB = libtcpsock_desktop.so
+DESKTOP_CFLAGS = -Wall -g -fPIC -I$(INCLUDE_DIR)
+DESKTOP_CC = gcc
 
 # 구글테스트 관련 설정
 GTEST_DIR = ../googletest
@@ -24,21 +22,32 @@ MY_GTEST_SRCS = $(MY_GTEST_DIR)/gtest-tcp-sock.cc
 MY_GTEST_OBJS = $(patsubst %.cc, %.o, $(MY_GTEST_SRCS))
 GTEST_TARGET = gtest-tcp-sock
 
-# 변수 정의
-CC = gcc
-CXX = g++
+# 컴파일러 (Yocto에서 CC, CXX 전달 받음)
+CC ?= gcc
+CXX ?= g++
 GTEST_CFLAGS = -Wall -g -I$(INCLUDE_DIR) -I$(GTEST_INCLUDE_DIR) -std=c++11
 GTEST_LDFLAGS = -L$(GTEST_LIB_DIR) -lgtest -lgtest_main -lpthread
 
+# 라이브러리 파일명
+TARGET_LIB = libtcpsock.so.1.0.0
+SONAME = libtcpsock.so.1
+LINKNAME = libtcpsock.so
+
 # 기본 타겟
-all: $(SOCKET_OBJS) #$(TCP_SERVER) $(TCP_CLIENT)
+all: $(TARGET_LIB) symlinks
 
-# 실행 파일 생성
-# $(TCP_SERVER): $(TCP_SERVER_OBJS)
-# 	$(CC) $(CFLAGS) -o $@ $^ $(SOCKET_OBJS) -lpthread
+# 공유 라이브러리 생성
+$(TARGET_LIB): $(SOCKET_OBJS)
+	$(CC) -shared $(LDFLAGS) -Wl,-soname,$(SONAME) -o $@ $^
 
-# $(TCP_CLIENT): $(TCP_CLIENT_OBJS)
-# 	$(CC) $(CFLAGS) -o $@ $^ $(SOCKET_OBJS) -lpthread
+# 심볼릭 링크 생성
+symlinks:
+	ln -sf $(TARGET_LIB) $(SONAME)
+	ln -sf $(SONAME) $(LINKNAME)
+
+# desktop 타겟
+desktop: $(SOCKET_SRCS)
+	$(DESKTOP_CC) -shared $(DESKTOP_CFLAGS) -o $(DESKTOP_TARGET_LIB) $(SOCKET_SRCS)
 
 # 구글테스트 빌드 및 실행
 gtest: $(MY_GTEST_OBJS) $(FOR_GTEST_OBJS)
@@ -59,4 +68,7 @@ gtest: $(MY_GTEST_OBJS) $(FOR_GTEST_OBJS)
 # clean 타겟: 빌드 파일 정리
 .PHONY: clean
 clean:
-	rm -f $(SOCKET_OBJS) $(TCP_SERVER) $(TCP_CLIENT) $(FOR_GTEST_OBJS) $(MY_GTEST_OBJS) $(GTEST_TARGET) $(TCP_SERVER_OBJS) $(TCP_CLIENT_OBJS)
+	rm -f $(SOCKET_OBJS) $(TARGET_LIB) $(SONAME) $(LINKNAME) \
+	      $(FOR_GTEST_OBJS) $(MY_GTEST_OBJS) $(GTEST_TARGET) \
+		  $(DESKTOP_TARGET_LIB)
+		
