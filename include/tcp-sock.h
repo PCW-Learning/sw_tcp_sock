@@ -1,6 +1,10 @@
 #ifndef TCP_SOCK_H
 #define TCP_SOCK_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netinet/tcp.h> // TCP_KEEPIDLE 등 TCP 옵션 정의
@@ -102,5 +106,8 @@ int recvMsgBlocking(int, void *, size_t);
  */
 int recvMsgTimeout(int, void *, size_t, int);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif
