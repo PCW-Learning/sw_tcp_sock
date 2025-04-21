@@ -11,7 +11,7 @@ DESKTOP_CFLAGS = -Wall -g -fPIC -I$(INCLUDE_DIR)
 DESKTOP_CC = gcc
 
 # 구글테스트 관련 설정
-GTEST_DIR = ../googletest
+GTEST_DIR = /home/pcw1029/googletest
 GTEST_INCLUDE_DIR = $(GTEST_DIR)/googletest/include
 GTEST_LIB_DIR = $(GTEST_DIR)/build/lib
 
