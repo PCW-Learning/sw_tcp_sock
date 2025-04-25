@@ -14,7 +14,9 @@ extern "C" {
  * @brief   버퍼 크기를 정의합니다.
  * @details 데이터 송수신에 사용되는 버퍼의 크기를 바이트 단위로 나타냅니다.
  */
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE             1024
+#define TCP_TIME_OUT            -2
+#define TCP_DISCONNECTION       0
 
 /**
  * @brief 포트가 사용 중인지 확인하는 함수

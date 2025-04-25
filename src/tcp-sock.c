@@ -224,13 +224,15 @@ int recvMsgTimeout(int iSock, void *pvBuffer, size_t iLength, int iTimeoutMsec) 
         return -1;
     } else if (ret == 0) {
         fprintf(stderr, "Timeout: no data received within %d seconds.\n", iTimeoutMsec);
-        return 0;  // timeout
+        return TCP_TIME_OUT;
     }
 
-    ssize_t received = recv(iSock, pvBuffer, iLength, 0);
+    ssize_t received = recv(iSock, pvBuffer, iLength, MSG_WAITALL);
     if (received < 0) {
         perror("recv failed");
         return -1;
+    }else if(received == 0){
+        return TCP_DISCONNECTION;
     }
 
     return (int)received;
