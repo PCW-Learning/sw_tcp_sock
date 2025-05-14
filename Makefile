@@ -22,7 +22,7 @@ FOR_GTEST_OBJS = $(patsubst %.c, %_gtest.o, $(FOR_GTEST_SRCS))
 MY_GTEST_DIR = gtest
 MY_GTEST_SRCS = $(MY_GTEST_DIR)/gtest-tcp-sock.cc
 MY_GTEST_OBJS = $(patsubst %.cc, %.o, $(MY_GTEST_SRCS))
-GTEST_TARGET = gtest-tcp-sock
+GTEST_TARGET = tcp-sock-gtest
 
 # 컴파일러 (Yocto에서 CC, CXX 전달 받음)
 CC ?= gcc

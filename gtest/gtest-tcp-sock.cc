@@ -300,7 +300,7 @@ TEST_F(TcpSocketTest, ReceiveWithTimeout_TimeoutExpected)
 
     char chRecvMsg[128] = {0};
     int iRecvSize = recvMsgTimeout(iSock, chRecvMsg, sizeof(chRecvMsg), 100);
-    ASSERT_EQ(iRecvSize, 0); // timeout expected
+    ASSERT_EQ(iRecvSize, TCP_TIME_OUT); // timeout expected
 
     close(iSock);
     server_thread.join();
@@ -327,7 +327,7 @@ TEST_F(TcpSocketTest, ReceiveWithTimeout_SuccessfulReceive)
     ASSERT_EQ(static_cast<size_t>(iSendSize), strlen(chMsg));
 
     char chRecvMsg[128] = {0};
-    int iRecvSize = recvMsgTimeout(iSock, chRecvMsg, sizeof(chRecvMsg), 300);
+    int iRecvSize = recvMsgTimeout(iSock, chRecvMsg, iSendSize, 300);
     ASSERT_GT(iRecvSize, 0); // timeout expected
     ASSERT_EQ(std::string(chRecvMsg, iRecvSize), std::string(chMsg));
 

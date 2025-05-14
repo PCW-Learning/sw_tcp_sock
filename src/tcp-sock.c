@@ -227,7 +227,7 @@ int recvMsgTimeout(int iSock, void *pvBuffer, size_t iLength, int iTimeoutMsec) 
         return TCP_TIME_OUT;
     }
 
-    ssize_t received = recv(iSock, pvBuffer, iLength, MSG_WAITALL);
+    ssize_t received = recv(iSock, pvBuffer, iLength, 0);//MSG_WAITALL
     if (received < 0) {
         perror("recv failed");
         return -1;
